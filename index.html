@@ -1,0 +1,1225 @@
+
+
+
+
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="utf-8" />
+<title>Mapa Desapariciones Jalisco</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+
+<link href="https://unpkg.com/maplibre-gl@3.6.1/dist/maplibre-gl.css" rel="stylesheet"/>
+<script src="https://unpkg.com/maplibre-gl@3.6.1/dist/maplibre-gl.js"></script>
+
+<style>
+body { margin:0; padding:0; }
+#map { position:absolute; top:0; bottom:0; width:100%; }
+
+#chart-box{
+  position:fixed;
+  top:120px;
+  right:10px;
+  width:200px;
+  background:rgba(255,255,255,0.95);
+  border-radius:12px;
+  padding:9px;
+  box-shadow:0 2px 6px rgba(0,0,0,.25);
+  z-index:9999;
+}
+
+#chart-box h4{
+  margin:0 0 6px 0;
+  font-size:13px;
+  text-align:center;
+}
+
+#infoButton{
+  position:absolute;
+  top:280px;
+  right:12px;
+  z-index:999;
+  background:#111;
+  color:#fff;
+  padding:6px 10px;
+  border-radius:6px;
+  cursor:pointer;
+  font-size:12px;
+}
+
+#infoPanel{
+  position:absolute;
+  top:300px;
+  right:20px;
+  width:320px;
+  max-height:70vh;
+  overflow:auto;
+  background:#fff;
+  border:1px solid #aaa;
+  padding:10px;
+  z-index:1000;
+  display:none;
+  font-size:13px;
+}
+
+#closePanel{
+  text-align:right;
+  cursor:pointer;
+  font-weight:bold;
+}
+
+
+.map-title{
+  position:fixed;
+  top:20px;
+  left:50%;
+  transform:translateX(-50%);
+  background:rgba(255,255,255,0.95);
+  padding:10px 22px;
+  font-weight:700;
+  font-size:16px;
+  border-radius:10px;
+  box-shadow:0 2px 6px rgba(0,0,0,.25);
+  z-index:9999;
+  pointer-events:none;
+}
+
+.layer-toggle{
+  position:fixed;
+  top:20px;
+  left:20px;
+  background:#f2f4f5;
+  padding:10px;
+  border:2px solid grey;
+  z-index:9999;
+  font-size:14px;
+}
+
+.legend{
+  position:fixed;
+  bottom:40px;
+  left:20px;
+  background:#f2f4f5;
+  padding:10px;
+  border:2px solid grey;
+  font-size:15px;
+  display:none;
+  z-index:9999;
+}
+.legend div{
+  display:flex;
+  align-items:center;
+}
+.legend span{
+  width:20px;
+  height:10px;
+  display:inline-block;
+  margin-right:6px;
+}
+
+#note-fosas{
+  bottom: 200px;
+  left: 20px;
+  background:#f2f4f5;
+  max-width: 130px;
+  z-index: 3;
+}
+
+
+.credit{
+  position:fixed;
+  bottom:20px;
+  right:20px;
+  background:#f2f4f5;
+  padding:6px;
+  border:1px solid grey;
+  font-size:11px;
+  z-index:9999;
+}
+
+.map-btn {
+  position: absolute;
+  top: 10px;
+  right: 40px;
+  z-index: 5000;
+  background: white;
+  border: 1px solid #ccc;
+  border-radius: 6px;
+  padding: 6px 10px;
+  cursor: pointer;
+  font-size: 13px;
+}
+
+.info-panel {
+  position: fixed;          /* 👈 importante */
+  top: 50px;
+  right: 10px;
+  width: 320px;
+  max-height: 70vh;
+  overflow-y: auto;
+  background: white;
+  border-radius: 8px;
+  padding: 14px;
+
+  z-index: 10000;           /* 👈 mayor que chart-box */
+  box-shadow: 0 2px 12px rgba(0,0,0,0.25);
+}
+
+
+.hidden {
+  display: none;
+}
+
+.close-btn {
+  position: absolute;
+  top: 8px;
+  right: 8px;
+  border: none;
+  background: transparent;
+  font-size: 16px;
+  cursor: pointer;
+}
+
+
+</style>
+</head>
+
+
+
+
+<body>
+
+
+<button id="btn-metodologia" class="map-btn">
+  ℹ️ <b>Metodología y fuentes</b>
+</button>
+
+<div id="metodologia-panel" class="info-panel hidden">
+  <button class="close-btn" onclick="toggleMetodologia()">✕</button>
+
+  <h3>Metodología y fuentes</h3>
+
+  <p>
+  Este mapa por colonias del Estado de Jalisco de reportes de personas desaparecidas
+  y localizadas se hizo usando una base de 6,256 los datos provienen de boletines oficiales de búsqueda emitidos por la
+  Comisión de Búsqueda de Personas del Estado de Jalisco (COBUPEJ)
+  entre 2019 y 2025.
+  </p>
+
+  <p>
+   El mapa fue elaborado por (X/@rys2000dev) utilizando, principalmente, 
+  de un listado obtenido del sitio web de laCOBUPEJ con información hasta 
+  el 31 de diciembre de 2024, recopilado originalmente por el periodista 
+  Lauro Rodríguez (X/@laurodriguez).
+  Los registros correspondientes a 2025 fueron capturados y procesados
+  por el académico Víctor González Romero (X/@VMGlezR), de donde fueron retomados.
+  La información fue depurada y revisada manualmente durante varias semanas.
+  Revisó y dio seguimiento Jorge Ramírez (X/@joraplas).
+  </p>
+
+  <h3>Fosas clandestinas</h3>
+  <p>
+  Información publicada por la Vicefiscalía de Personas Desaparecidas
+  (2018–2025). En algunos casos, la ubicación corresponde a la colonia
+  más cercana por ausencia de coordenadas precisas.
+  </p>
+
+  <h3>Homicidios</h3>
+  <p>
+  Registros del Instituto de Información Estadística y Geográfica de Jalisco
+  (IIEG) y plataformas oficiales de seguridad pública.
+  </p>
+
+  <h3>Capas de contexto</h3>
+  <p>
+  Indicadores sociodemográficos del Censo de Población y Vivienda
+  INEGI 2020 (jovenes, rezago educativo y rezago económico).
+  </p>
+
+  <p style="margin-top:1em; font-size:0.9em; opacity:0.75;">
+  La información presentada tiene un carácter orientativo,
+  no diagnóstico, y debe utilizarse con cautela.
+  </p>
+</div>
+
+
+<!-- ℹ️ BOTÓN DE NOTA -->
+<div id="infoButton" onclick="toggleInfo()">ℹ️ Nota </div>
+
+<!-- 📄 PANEL DE METODOLOGÍA -->
+<div id="infoPanel">
+  <div id="closePanel" onclick="toggleInfo()">✖ Cerrar</div>
+  <hr>
+  <div id="infoContent"></div>
+</div>
+
+
+<div id="map"></div>
+
+<div id="chart-box">
+
+<div style="margin-bottom:6px;">
+  <select id="chartMode" style="width:100%; font-size:12px;">
+    <option value="simple">Gráfica de la capa</option>
+    <option value="des_vs_loc">Desaparecidos vs Localizados</option>
+    <option value="des_vs_fosas">Desaparecidos vs Victimas fosas</option>
+    <option value="hom_vs_fosas">Homicidios vs Victimas fosas</option>
+  </select>
+</div>
+
+  <canvas id="chart"></canvas>
+</div>
+
+
+<div id="map-title" class="map-title">
+Aún desaparecidos (2019–2025)
+</div>
+
+
+<!-- 🎛️ CONTROL DE CAPAS BUENO29DIC2025-->
+<div class="layer-toggle">
+<b>Capas</b><br>
+<input type="radio" name="layer" checked onclick="showLayer('desaparecidos')">Aún desaparecidos 2019-2025<br>
+<input type="radio" name="layer" onclick="showLayer('localizados')">Localizados 2019-2025<br>
+<input type="radio" name="layer" onclick="showLayer('homicidios')">Homicidios 2019-2024<br>
+<input type="radio" name="layer" onclick="showLayer('municipios')">Municipios 2000-2025<br>
+<input type="radio" name="layer" onclick="showLayer('fosas')">Fosas Clandestinas 2018-2025
+<hr>
+<b>Contexto social</b><br>
+<input type="radio" name="layer" onclick="showLayer('juventud')">Jovenes de 15–24<br>
+<input type="radio" name="layer" onclick="showLayer('rezago_edu')">Rezago educativo<br>
+<input type="radio" name="layer" onclick="showLayer('rezago_eco')">Rezago económico<br>
+
+
+</div>
+
+<!-- 🔴 LEYENDAS -->
+<div id="legend-desaparecidos" class="legend" style="display:block">
+<b>Aún desaparecidos</b>
+<div><span style="background:#fff7bc"></span>1–10</div>
+<div><span style="background:#fec44f"></span>11–20</div>
+<div><span style="background:#ec7014"></span>21–30</div>
+<div><span style="background:#cc4c02"></span>31–40</div>
+<div><span style="background:#bf0404"></span>41+</div>
+</div>
+
+<div id="legend-localizados" class="legend">
+<b>Localizados</b>
+<div><span style="background:#b6fad3"></span>1–5</div>
+<div><span style="background:#35e681"></span>6–10</div>
+<div><span style="background:#229478"></span>11–20</div>
+<div><span style="background:#289959"></span>21-30</div>
+<div><span style="background:#18693b"></span>31-40</div>
+<div><span style="background:#0c4d28"></span>41+</div>
+</div>
+
+<div id="legend-homicidios" class="legend">
+<b>Homicidios</b>
+<div><span style="background:#d0e1f9"></span>1–10</div>
+<div><span style="background:#74a9cf"></span>11–40</div>
+<div><span style="background:#2b8cbe"></span>41–100</div>
+<div><span style="background:#045a8d"></span>101-150</div>
+<div><span style="background:#023858"></span>151+</div>
+</div>
+
+<div id="legend-municipios" class="legend">
+<b>Casos por municipio</b>
+<div><span style="background:#fff7bc"></span>≤500</div>
+<div><span style="background:#fec44f"></span>501-2000</div>
+<div><span style="background:#ec7014"></span>2001-3000</div>
+<div><span style="background:#f21111"></span>3001-3500</div>
+<div><span style="background:#bf0404"></span>3501-6000</div>
+<div><span style="background:#82043d"></span>6001-7000</div>
+<div><span style="background:#4d0626"></span>7001+</div>
+
+</div>#f21111
+
+
+<div id="legend-juventud" class="legend">
+<b>Jovenes 15–24 (%)</b>
+<div><span style="background:#deebf7"></span>5%</div>
+<div><span style="background:#9ecae1"></span>10%</div>
+<div><span style="background:#36a2c9"></span>20%</div>
+<div><span style="background:#08519c"></span>25%+</div>
+</div>
+
+<div id="legend-rezago_edu" class="legend">
+<b>Rezago educativo (%)</b>
+<div><span style="background:#fee8c8"></span>5%</div>
+<div><span style="background:#fdbb84"></span>10%</div>
+<div><span style="background:#e34a33"></span>15%</div>
+<div><span style="background:#b30000"></span>20%+</div>
+</div>
+
+<div id="legend-rezago_eco" class="legend">
+<b>Rezago económico (%)</b>
+<div><span style="background:#edf8e9"></span>5%</div>
+<div><span style="background:#74c476"></span>15%</div>
+<div><span style="background:#238b45"></span>25%</div>
+<div><span style="background:#016639"></span>30%+</div>
+<div><span style="background:#042920"></span>40%+</div>
+</div>
+
+
+<div id="legend-fosas" class="legend">
+<b>Víctimas localizadas <br>
+(preliminar)</b>
+<div><span style="background:#ffcccc"></span>1–5</div>
+<div><span style="background:#ff6666"></span>6–15</div>
+<div><span style="background:#cc0000"></span>16–30</div>
+<div><span style="background:#7f0000"></span>31-60</div>
+<div><span style="background:#8c0b7f"></span>61-100</div>
+<div><span style="background:#3d0437"></span>100+</div>
+</div>
+
+
+
+
+
+<div style="font-size:11px;margin-top:6px;">
+Ubicación referencial<br>
+por colonia
+</div>
+</div>
+
+
+<div class="credit">
+<b><a href="https://x.com/rys2000dev" target="_blank">Elaboró X/@rys2000dev</a></b>
+</div>
+
+
+<script>
+
+let activeLayer = "desaparecidos"; // 👈 inicialización correcta
+
+const map = new maplibregl.Map({
+  container:"map",
+  style:"https://basemaps.cartocdn.com/gl/voyager-gl-style/style.json",
+  center:[-103.35,20.67],
+  zoom:11,
+  minZoom:7,
+  maxZoom:15
+});
+
+map.addControl(new maplibregl.NavigationControl(),"top-right");
+
+map.on("load",()=>{
+
+  map.addSource("colonias",{ type:"geojson", data:"colonias.geojson" });
+  map.addSource("municipios",{ type:"geojson", data:"municipios.geojson" });
+  map.addSource("fosas",{type:"geojson",data:"fosas.geojson"});
+  map.addSource("juventud",{ type:"geojson", data:"capa_juventud_1524.geojson" });
+  map.addSource("rezago_edu",{ type:"geojson", data:"capa_rezago_educativo.geojson" });
+  map.addSource("rezago_eco",{ type:"geojson", data:"capa_rezago_economico.geojson" });
+
+
+
+  // 🔴 DESAPARECIDOS
+  map.addLayer({
+    id:"desaparecidos",
+    type:"fill",
+    source:"colonias",
+    paint:{
+      "fill-color":[
+        "case",
+        ["==",["get","desaparecidos"],0],"rgba(0,0,0,0)",
+        ["<=",["get","desaparecidos"],10],"#fff7bc",
+        ["<=",["get","desaparecidos"],20],"#fec44f",
+        ["<=",["get","desaparecidos"],30],"#ec7014",
+        ["<=",["get","desaparecidos"],40],"#cc4c02",
+        "#bf0404"
+      ],
+      "fill-opacity":0.7,
+      "fill-outline-color":"#000"
+    }
+  });
+
+  // 🟢 LOCALIZADOS
+  map.addLayer({
+    id:"localizados",
+    type:"fill",
+    source:"colonias",
+    layout:{ visibility:"none" },
+    paint:{
+      "fill-color":[
+        "case",
+        ["==",["get","localizados"],0],"rgba(0,0,0,0)",
+        ["<=",["get","localizados"],5],"#b6fad3",
+        ["<=",["get","localizados"],10],"#35e681",
+        ["<=",["get","localizados"],20],"#229478",
+        ["<=",["get","localizados"],20],"#0b7539",
+        "#095229"
+      ],
+      "fill-opacity":0.7,
+      "fill-outline-color":"#000"
+    }
+  });
+
+  // 🔵 HOMICIDIOS
+  map.addLayer({
+    id:"homicidios",
+    type:"fill",
+    source:"colonias",
+    layout:{ visibility:"none" },
+    paint:{
+      "fill-color":[
+        "case",
+        ["==",["get","total_casos_otro"],0],"rgba(0,0,0,0)",
+        ["<=",["get","total_casos_otro"],10],"#d0e1f9",
+        ["<=",["get","total_casos_otro"],30],"#74a9cf",
+        ["<=",["get","total_casos_otro"],80],"#2b8cbe",
+        ["<=",["get","total_casos_otro"],100],"#1178ad",
+        ["<=",["get","total_casos_otro"],150],"#045a8d",
+        "#023858"
+      ],
+      "fill-opacity":0.7,
+      "fill-outline-color":"#000"
+    }
+  });
+
+  // 🟣 MUNICIPIOS
+  map.addLayer({
+    id:"municipios",
+    type:"fill",
+    source:"municipios",
+    layout:{ visibility:"none" },
+    paint:{
+      "fill-color":[
+        "case",
+        ["==",["get","total_casos"],0],"rgba(0,0,0,0)",
+        ["<=",["get","total_casos"],500],"#fff7bc",
+        ["<=",["get","total_casos"],2000],"#fec44f",
+        ["<=",["get","total_casos"],3000],"#ec7014",
+        ["<=",["get","total_casos"],3500],"#f21111",
+        ["<=",["get","total_casos"],6000],"#bf0404",
+        ["<=",["get","total_casos"],7000],"#82043d",
+        "#4d0626"
+      ],
+      "fill-opacity":0.6,
+      "fill-outline-color":"#000"
+    }
+  });
+
+//JOVENES
+  map.addLayer({
+  id:"juventud",
+  type:"fill",
+  source:"juventud",
+  layout:{ visibility:"none" },
+  paint:{
+    "fill-color":[
+      "case",
+      ["<", ["get","POBTOT"], 100], "rgba(0,0,0,0)",
+      ["interpolate",["linear"],["get","JUVENTUD_PCT"],
+      0.05,"#deebf7",
+      0.10,"#9ecae1",
+      0.20,"#36a2c9",
+      0.25,"#08519c"
+      ]
+    ],
+    "fill-opacity":0.6,
+    "fill-outline-color":"#000"
+  }
+});
+
+
+//REZAGO EDUCATIVO
+map.addLayer({
+  id:"rezago_edu",
+  type:"fill",
+  source:"rezago_edu",
+  layout:{ visibility:"none" },
+  paint:{
+    "fill-color":[
+      "case",
+   ["<", ["get","POBTOT"], 100], "rgba(0,0,0,0)",
+   ["interpolate",["linear"],["get","REZAGO_EDU_PCT"],
+      0.05,"#fee8c8",
+      0.10,"#fdbb84",
+      0.15,"#e34a33",
+      0.20,"#b30000"
+    ]
+    ],
+    "fill-opacity":0.6,
+    "fill-outline-color":"#000"
+  }
+});
+
+
+//REZAGO ECONÓMICO
+map.addLayer({
+  id:"rezago_eco",
+  type:"fill",
+  source:"rezago_eco",
+  layout:{ visibility:"none" },
+  paint:{
+    "fill-color":[
+      "case",
+      ["<", ["get","POBTOT"], 100], "rgba(0,0,0,0)",
+
+      ["interpolate", ["linear"], ["get","REZAGO_ECO_PCT"],
+        0.05, "#edf8e9",
+        0.15, "#74c476",
+        0.25, "#238b45",
+        0.30, "#016639",
+        0.40, "#042920"
+      ]
+    ],
+    "fill-opacity":0.6,
+    "fill-outline-color":"#000"
+  }
+});
+
+
+
+
+// 🔴 FOSAS / CASOS PRELIMINARES (PUNTOS)
+map.addLayer({
+  id:"fosas",
+  type:"circle",
+  source:"fosas",
+  layout:{ visibility:"none" },   // 👈 ESTA LÍNEA
+  paint:{
+    "circle-radius":[
+      "interpolate",["linear"],["get","total_preliminar"],
+      1,5,
+      10,9,
+      30,14
+    ],
+    "circle-color":[
+      "case",
+      ["<=",["get","total_preliminar"],5],"#ffb3b3",
+      ["<=",["get","total_preliminar"],15],"#ff4d4d",
+      ["<=",["get","total_preliminar"],30],"#cc0000",
+      ["<=",["get","total_preliminar"],60],"#7f0000",
+      ["<=",["get","total_preliminar"],100],"#8c0b7f",
+
+      "#54084c"
+    ],
+    "circle-stroke-color":"#400000",
+    "circle-stroke-width":1,
+    "circle-opacity":0.85
+  }
+});
+
+
+
+
+  // 🖱️ POPUPS
+  function popup(layer,html){
+    map.on("click",layer,e=>{
+      new maplibregl.Popup()
+      .setLngLat(e.lngLat)
+      .setHTML(html(e.features[0].properties))
+      .addTo(map);
+    });
+  }
+
+  popup("desaparecidos",p=>`
+    <b>${p.COL_NORM}</b><br>
+    Municipio: ${p.MUNICIPIO}<br>
+    Desaparecidos: ${p.desaparecidos}<br>
+    Hombres: ${p.hombres_des}<br>
+    Mujeres: ${p.mujeres_des}<br>
+    Adultos: ${p.adultos_des}<br>
+    Menores: ${p.menores_des}
+  `);
+
+  popup("localizados",p=>`
+    <b>${p.COL_NORM}</b><br>
+    Municipio: ${p.MUNICIPIO}<br>
+    Localizados: ${p.localizados}<br>
+    Hombres: ${p.hombres_loc}<br>
+    Mujeres: ${p.mujeres_loc}<br>
+    Adultos: ${p.adultos_loc}<br>
+    Menores: ${p.menores_loc}<br>
+    Con vida: ${p.loc_con_vida}<br>
+    Sin vida: ${p.loc_sin_vida}
+  `);
+
+  popup("homicidios",p=>`
+    <b>${p.COL_NORM}</b><br>
+    Municipio: ${p.MUNICIPIO}<br>
+    Homicidios: ${p.total_casos_otro}<br>
+  `);
+
+  popup("municipios",p=>`
+    <b>${p.MUNICIPIO}</b><br>
+    Total casos: ${p.total_casos}<br>
+    Desaparecidos: ${p.desaparecidos}<br>
+    Localizados: ${p.localizados}
+  `);
+popup("juventud",p=>`
+  <b>${p.COL_NORM}</b><br>
+  Municipio: ${p.MUNICIPIO}<br>
+  Población total: ${p.POBTOT}<br>
+  Jóvenes 15–24: ${p.JUVENTUD_1524}<br>
+  Porcentaje: ${(p.JUVENTUD_PCT*100).toFixed(1)}%
+`);
+
+popup("rezago_edu",p=>`
+  <b>${p.COL_NORM}</b><br>
+  Municipio: ${p.MUNICIPIO}<br>
+  Población total: ${p.POBTOT}<br>
+  Personas en rezago educativo: ${p.REZAGO_EDU}<br>
+  Porcentaje: ${(p.REZAGO_EDU_PCT*100).toFixed(1)}%
+`);
+
+popup("rezago_eco",p=>`
+  <b>${p.COL_NORM}</b><br>
+  Municipio: ${p.MUNICIPIO}<br>
+  Población total: ${p.POBTOT}<br>
+  Rezago económico: ${p.REZAGO_ECO}<br>
+  Porcentaje: ${(p.REZAGO_ECO_PCT*100).toFixed(1)}%
+`);
+
+// 🔥 Inicialización real de la capa por defecto
+showLayer("desaparecidos");
+
+
+});
+
+
+map.on("click","fosas",e=>{
+  const p = e.features[0].properties;
+
+  new maplibregl.Popup()
+    .setLngLat(e.lngLat)
+    .setHTML(`
+      Municipio: ${p.MUNICIPIO}<br>
+      Colonia: ${p.COL_NORM}<br>
+      Fosas: ${p.casos}<br>
+      Víctimas localizadas (preliminar): ${p.total_preliminar}<br>
+      Hombres identificados*: ${p.hombres_identificados}<br>
+      Mujeres identificadas*: ${p.mujeres_identificadas}
+    `)
+    .addTo(map);
+});
+
+  const layerColors = {
+  homicidios: "#2b8cbe",      // rojo oscuro
+  desaparecidos: "#cc4c02",   // naranja
+  localizados: "#107821",     // azul
+  fosas: "#9c0398",           // morado
+  municipios: "#bf0404"
+};
+
+const layerTitles = {
+  desaparecidos: "Aún desaparecidos (2019–2025)",
+  localizados: "Personas localizadas (2019–2025)",
+  homicidios: "Homicidios registrados (2019–2024)",
+  municipios: "Totales por municipio (2000–2025)",
+  fosas: "Fosas clandestinas y hallazgos (2018–2025)",
+  juventud: "Jovenes 15–24 años (% población)",
+  rezago_edu: "Rezago educativo por colonia",
+  rezago_eco: "Rezago económico por colonia"
+
+};
+
+
+let chart;
+let coloniasData = [];
+let fosasData = [];
+let municipiosData = [];
+let chartMode = "simple";
+
+
+// ===============================
+// CARGA DE DATOS
+// ===============================
+fetch("colonias.geojson")
+  .then(r => r.json())
+  .then(d => {
+    coloniasData = d.features;
+    updateChart("desaparecidos");
+  });
+
+fetch("fosas.geojson")
+  .then(r => r.json())
+  .then(d => {
+    fosasData = d.features;
+  });
+
+fetch("municipios.geojson")
+  .then(r => r.json())
+  .then(d => {
+    municipiosData = d.features;
+  });
+
+// ===============================
+// UPDATE CHART
+// ===============================
+function updateChart(layer){
+
+    if(chartMode !== "simple"){
+    updateCrossChart(chartMode);
+    return;
+  }
+
+  let data = [];
+  let label = "";
+  let barColor = "#666";
+
+  // =========================
+  // COLONIAS
+  // =========================
+  if(layer === "desaparecidos"){
+    label = "Aún desaparecidos";
+    barColor = layerColors.desaparecidos;
+
+    data = coloniasData.map(f => ({
+      name: f.properties.COL_NORM,
+      value: +f.properties.desaparecidos
+    }));
+  }
+
+function updateCrossChart(mode){
+
+  let labels = [];
+  let datasets = [];
+
+  // 🔁 ACUMULADORES POR COLONIA + MUNICIPIO
+  const base = {};
+
+  // =========================
+  // COLONIAS
+  // =========================
+  coloniasData.forEach(f => {
+    const col = f.properties.COL_NORM;
+    const mun = f.properties.MUNICIPIO;
+    const key = `${col} | ${mun}`;
+
+    if(!base[key]){
+      base[key] = {
+        label: `${col} (${mun})`,
+        des: 0,
+        loc: 0,
+        hom: 0,
+        fosas: 0
+      };
+    }
+
+    base[key].des += +f.properties.desaparecidos || 0;
+    base[key].loc += +f.properties.localizados || 0;
+    base[key].hom += +f.properties.total_casos_otro || 0;
+  });
+
+  // =========================
+  // FOSAS → VÍCTIMAS (total_preliminar)
+  // =========================
+  fosasData.forEach(f => {
+    const col = f.properties.COL_NORM;
+    const mun = f.properties.MUNICIPIO;
+    const key = `${col} | ${mun}`;
+
+    const victimas = +f.properties.total_preliminar || 0;
+
+    if(base[key]){
+      base[key].fosas += victimas;
+    }
+  });
+
+  // =========================
+  // SELECCIÓN DE CRUCE
+  // =========================
+  labels = Object.keys(base);
+
+  if(mode === "des_vs_loc"){
+    datasets = [
+      {
+        label:"Desaparecidos",
+        data: labels.map(l => base[l].des),
+        backgroundColor: layerColors.desaparecidos
+      },
+      {
+        label:"Localizados",
+        data: labels.map(l => base[l].loc),
+        backgroundColor: layerColors.localizados
+      }
+    ];
+  }
+
+  if(mode === "des_vs_fosas"){
+    datasets = [
+      {
+        label:"Desaparecidos",
+        data: labels.map(l => base[l].des),
+        backgroundColor: layerColors.desaparecidos
+      },
+      {
+        label:"Víctimas en fosas",
+        data: labels.map(l => base[l].fosas),
+        backgroundColor: layerColors.fosas
+      }
+    ];
+  }
+
+  if(mode === "hom_vs_fosas"){
+    datasets = [
+      {
+        label:"Homicidios",
+        data: labels.map(l => base[l].hom),
+        backgroundColor: layerColors.homicidios
+      },
+      {
+        label:"Víctimas en fosas",
+        data: labels.map(l => base[l].fosas),
+        backgroundColor: layerColors.fosas
+      }
+    ];
+  }
+
+  // =========================
+  // TOP 5 POR SUMA TOTAL
+  // =========================
+  const totals = labels.map((l,i)=>({
+    key:l,
+    label: base[l].label,
+    total: datasets.reduce((s,d)=>s + d.data[i],0)
+  }))
+  .sort((a,b)=>b.total-a.total)
+  .slice(0,5);
+
+  labels = totals.map(t => t.label);
+
+  datasets.forEach(d=>{
+    d.data = totals.map(t=>{
+      const idx = Object.keys(base).indexOf(t.key);
+      return d.data[idx];
+    });
+  });
+
+  if(chart) chart.destroy();
+
+  chart = new Chart(document.getElementById("chart"),{
+    type:"bar",
+    data:{ labels, datasets },
+    options:{
+      responsive:true,
+      plugins:{
+        tooltip:{ displayColors:true }
+      },
+      scales:{
+        x:{ ticks:{ display:false } },
+        y:{ beginAtZero:true }
+      }
+    }
+  });
+}
+
+
+  if(layer === "localizados"){
+    label = "Personas localizadas";
+    barColor = layerColors.localizados;
+
+    data = coloniasData.map(f => ({
+      name: f.properties.COL_NORM,
+      value: +f.properties.localizados
+    }));
+  }
+
+  if(layer === "homicidios"){
+    label = "Homicidios";
+    barColor = layerColors.homicidios;
+
+    data = coloniasData.map(f => ({
+      name: f.properties.COL_NORM,
+      value: +f.properties.total_casos_otro
+    }));
+  }
+
+  // =========================
+  // FOSAS
+  // =========================
+  if(layer === "fosas"){
+    label = "Víctimas localizadas en fosas";
+    barColor = layerColors.fosas;
+
+    data = fosasData.map(f => ({
+      name: f.properties.COL_NORM,
+      value: +f.properties.total_preliminar
+    }));
+  }
+
+  // =========================
+  // MUNICIPIOS
+  // =========================
+if(layer === "municipios"){
+  label = "Totales por municipio";
+  barColor = layerColors.municipios;
+
+  const acumulado = {};
+
+  municipiosData.forEach(f => {
+    const mun = f.properties.MUNICIPIO;
+    const total = +f.properties.total_casos || 0;
+
+    if(!acumulado[mun]){
+      acumulado[mun] = total;
+    }
+  });
+
+  data = Object.entries(acumulado).map(([name,value]) => ({
+    name,
+    value
+  }));
+}
+
+
+  // =========================
+  // TOP 5
+  // =========================
+  data = data
+    .filter(d => d.value > 0)
+    .sort((a,b) => b.value - a.value)
+    .slice(0,5);
+
+  const labels = data.map(d => d.name);
+  const values = data.map(d => d.value);
+
+  if(chart) chart.destroy();
+
+  // =========================
+  // CHART
+  // =========================
+  chart = new Chart(document.getElementById("chart"),{
+    type:"bar",
+    data:{
+      labels,
+      datasets:[{
+        label,
+        data: values,
+        backgroundColor: barColor,
+        barThickness: 22,
+        maxBarThickness: 26
+      }]
+    },
+    options:{
+      plugins:{
+        legend:{
+          display:false
+        },
+        tooltip:{
+          displayColors:false   // 🔥 quita el cuadrito de color
+        }
+      },
+      scales:{
+        x:{
+          ticks:{
+            display:false
+          },
+          grid:{
+            display:false
+          }
+        },
+        y:{
+          beginAtZero:true
+        }
+      }
+    }
+  });
+}
+
+
+
+
+const layerNotes = {
+
+  desaparecidos: `
+  <h3>Desapariciones</h3>
+  <p>
+    Este mapa por colonias del Estado de Jalisco de reportes de personas desaparecidas
+    se hizo usando una base de 6,256 boletines (cédulas de búsqueda)
+    que fueron emitidos por la Comisión de Búsqueda de Jalisco (COBUPEJ).
+  
+  </p>`,
+
+  localizados: `
+  <h3>Personas localizadas</h3>
+  <p>
+    Este mapa por colonias del Estado de Jalisco de reportes de personas localizadas 
+    se hizo usando una base de 6,256 boletines (cédulas de búsqueda)
+    que fueron emitidos por la Comisión de Búsqueda de Jalisco (COBUPEJ).
+  </p>`,
+
+  homicidios: `
+<h3>Homicidios</h3>
+<p>
+ Registros del Instituto de Información Estadística y Geográfica de Jalisco
+  (IIEG) y plataformas oficiales de seguridad pública.
+
+<p>
+Registros de homicidios dolosos por colonia en el Estado de Jalisco.
+Esta capa se presenta únicamente como
+<strong>contexto general de violencia</strong>
+y no implica relación directa con otros eventos mostrados en el mapa.
+</p>
+
+  </p>`,
+
+  municipios: `
+<h3>Totales por municipio</h3>
+<p>
+Totales acumulados de casos por municipio en el Estado de Jalisco,
+con base en el Registro Estatal de Personas Desaparecidas, para el periodo 2000–2025.
+</p>
+  </p>`,
+
+  fosas: `
+  <h3>Fosas clandestinas</h3>
+
+<p>
+  Información publicada por la Vicefiscalía de Personas Desaparecidas
+  (2018–2025).
+  <p>
+  En algunos puntos se hizo referencia a la colonia más cercana debido a la
+ausencia de coordenadas precisas del evento.
+  </p>`,
+
+  juventud: `
+<h3>Juventud (15–24 años)</h3>
+<p>
+Indicador elaborado con datos del Censo de Población y Vivienda 2020 del INEGI.
+Corresponde a la suma de la población de 15–17 y 18–24 años.
+</p>
+
+<p>
+El color representa el porcentaje de población joven
+respecto a la población total de cada colonia.
+<p>
+Para efectos de estabilidad estadística,
+se excluyen colonias con población menor a 100 habitantes.
+  </p>`,
+
+  rezago_edu: `
+<h3>Rezago educativo</h3>
+<p>
+Indicador elaborado con datos del Censo de Población y Vivienda 2020 del INEGI.
+Corresponde a la población de 15 años o más que no concluyó la educación básica.
+</p>
+
+<p>
+Para efectos de estabilidad estadística,
+se excluyen colonias con población menor a 100 habitantes.
+  </p>`,
+
+  rezago_eco: `
+<h3>Rezago económico</h3>
+<p>
+Indicador elaborado con datos del Censo de Población y Vivienda 2020 del INEGI.
+Se construye a partir de la suma de la población desocupada y
+la población económicamente inactiva.
+</p>
+
+<p>
+El valor representa la proporción de personas con
+limitada inserción en el mercado laboral,
+y se presenta únicamente como contexto socioeconómico.
+<p>
+Para efectos de estabilidad estadística,
+se excluyen colonias con población menor a 100 habitantes.
+  </p>`
+};
+
+
+// 🎛️ TOGGLE
+// 🎛️ TOGGLE
+function showLayer(id){
+
+  activeLayer = id; // 👈 CLAVE PARA LOS CRUCES
+
+const chartBox = document.getElementById("chart-box");
+
+if(["juventud","rezago_edu","rezago_eco"].includes(id)){
+  chartBox.style.display = "none";
+} else {
+  chartBox.style.display = "block";
+}
+
+  const layers = [
+    "desaparecidos","localizados","homicidios",
+    "municipios","fosas",
+    "juventud","rezago_edu","rezago_eco"
+  ];
+
+  // Capas
+  layers.forEach(l=>{
+    if(map.getLayer(l)){
+      map.setLayoutProperty(l,"visibility", l === id ? "visible" : "none");
+    }
+
+    const legend = document.getElementById("legend-" + l);
+    if(legend){
+      legend.style.display = l === id ? "block" : "none";
+    }
+  });
+
+  // Título
+  if(layerTitles[id]){
+    document.getElementById("map-title").innerText = layerTitles[id];
+  }
+
+  // Gráfica
+  updateChart(id);
+
+  // Nota metodológica
+  const btn = document.getElementById("infoButton");
+  const panel = document.getElementById("infoPanel");
+  const content = document.getElementById("infoContent");
+
+  if(layerNotes[id]){
+    btn.style.display = "block";
+    content.innerHTML = layerNotes[id];
+  } else {
+    btn.style.display = "none";
+    panel.style.display = "none";
+  }
+
+  // Nota especial fosas
+  const noteFosas = document.getElementById("note-fosas");
+  if(noteFosas){
+    noteFosas.style.display = id === "fosas" ? "block" : "none";
+  }
+}
+
+
+function toggleMetodologia() {
+  const panel = document.getElementById("metodologia-panel");
+  panel.classList.toggle("hidden");
+}
+
+
+
+function toggleInfo(){
+  const panel = document.getElementById("infoPanel");
+  const content = document.getElementById("infoContent");
+
+  if(!content.innerHTML.trim()) return;
+
+  panel.style.display =
+    panel.style.display === "block" ? "none" : "block";
+}
+
+
+document.getElementById("chartMode").addEventListener("change", e => {
+  chartMode = e.target.value;
+
+  if(activeLayer){
+    updateChart(activeLayer);
+  }
+});
+
+document.getElementById("btn-metodologia")
+  .addEventListener("click", toggleMetodologia);
+
+
+</script>
+
+
+</body>
+</html>
+
+
