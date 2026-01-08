@@ -2,6 +2,9 @@
 
 
 
+
+
+
 <!DOCTYPE html>
 <html lang="es">
 <head>
@@ -184,10 +187,83 @@ body { margin:0; padding:0; }
 }
 
 
+/* ============================= */
+/* 📱 MODO MÓVIL: SOLO CAPAS     */
+/* ============================= */
+@media (max-width: 768px) {
+
+  /* Ocultar TODO lo que no sea mapa o capas */
+  #chart-box,
+  #infoButton,
+  #infoPanel,
+  #btn-metodologia,
+  #metodologia-panel,
+  .map-title {
+    display: none !important;
+  }
+
+  /* Mapa siempre visible */
+  #map {
+    z-index: 1;
+  }
+
+  /* Selector de capas como panel inferior */
+  .layer-toggle {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+
+    max-height: 55vh;
+    overflow-y: auto;
+
+    background: #f2f4f5;
+    border-top: 2px solid #999;
+    border-radius: 16px 16px 0 0;
+
+    padding: 14px;
+    font-size: 15px;
+
+    z-index: 10000;
+  }
+
+  .layer-toggle b {
+    display: block;
+    margin-bottom: 6px;
+  }
+}
+
+@media (max-width: 768px) {
+
+  #mobileLayersBtn{
+    position: fixed;
+    bottom: 70px;
+    right: 12px;
+    z-index: 11000;
+
+    background: #111;
+    color: #fff;
+    border: none;
+    border-radius: 20px;
+    padding: 10px 14px;
+    font-size: 14px;
+  }
+
+  .layer-toggle {
+    display: none;
+  }
+
+  .layer-toggle.open {
+    display: block;
+  }
+}
+
+
 </style>
 </head>
 
 
+<button id="mobileLayersBtn">🗂 Capas</button>
 
 
 <body>
@@ -1068,9 +1144,10 @@ y no implica relación directa con otros eventos mostrados en el mapa.
   municipios: `
 <h3>Totales por municipio</h3>
 <p>
-Totales acumulados de casos por municipio en el Estado de Jalisco,
-con base en el Registro Estatal de Personas Desaparecidas del estado
-de Jalisco, para el periodo 2000–2025.
+Totales acumulados de casos DE PERSONAS DESAPARECIDAS Y LOCALIZADAS 
+por municipioS DEL Estado de Jalisco. SE HIZO con base en el Registro 
+Estatal de Personas Desaparecidas del estado de Jalisco (REPD), para 
+el periodo 2000–2025 NOVIEMBRE.
 </p>
   </p>`,
 
@@ -1238,11 +1315,24 @@ document.getElementById("chartMode").addEventListener("change", e => {
 document.getElementById("btn-metodologia")
   .addEventListener("click", toggleMetodologia);
 
+const btn = document.getElementById("mobileLayersBtn");
+const panel = document.querySelector(".layer-toggle");
+
+if(btn && panel){
+  btn.addEventListener("click", ()=>{
+    panel.classList.toggle("open");
+  });
+}
+
 
 </script>
 
 
 </body>
 </html>
+
+
+
+
 
 
