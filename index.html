@@ -167,7 +167,7 @@ body { margin:0; padding:0; }
   border-radius: 8px;
   padding: 14px;
 
-  z-index: 10001;           /* 👈 mayor que chart-box */
+  z-index: 10000;           /* 👈 mayor que chart-box */
   box-shadow: 0 2px 12px rgba(0,0,0,0.25);
 }
 
@@ -194,6 +194,8 @@ body { margin:0; padding:0; }
 
   /* Ocultar TODO lo que no sea mapa o capas */
   #chart-box,
+  #infoButton,
+  #infoPanel,
   #btn-metodologia,
   #metodologia-panel,
   .map-title {
@@ -205,69 +207,46 @@ body { margin:0; padding:0; }
     z-index: 1;
   }
 
-  /* Panel de capas (más compacto) */
-.layer-toggle {
-  top: 120px;
-  position: fixed;
-  bottom: -6px;
+  /* Selector de capas como panel inferior */
+  .layer-toggle {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
 
-  left: 50%;
-  transform: translateX(-50%);   /* 👈 centra el panel */
-  width: 70%;                    /* 👈 menos ancho */
-  max-width: 420px;              /* 👈 límite para móviles grandes */
+    max-height: 55vh;
+    overflow-y: auto;
 
-  max-height: 32vh;
-  overflow-y: auto;
+    background: #f2f4f5;
+    border-top: 2px solid #999;
+    border-radius: 16px 16px 0 0;
 
-  background: #f2f4f5;
-  border: 1px solid #aaa;
-  border-radius: 14px 14px 0 0;
+    padding: 14px;
+    font-size: 15px;
 
-  padding: 6px 10px;
-  font-size: 11px;
+    z-index: 10000;
+  }
 
-  z-index: 10000;
-}
-
-
-  /* Título del panel */
   .layer-toggle b {
     display: block;
-    margin-bottom: 4px;
-    font-size: 14px;
-  }
-
-  /* Checkboxes más compactos */
-  .layer-toggle label {
-    display: flex;
-    align-items: center;
-    gap: 6px;
     margin-bottom: 6px;
-    line-height: 1.2;
-  }
-
-  .layer-toggle input[type="checkbox"] {
-    transform: scale(0.9);
   }
 }
 
-/* ============================= */
-/* 📱 BOTÓN FLOTANTE CAPAS       */
-/* ============================= */
 @media (max-width: 768px) {
 
   #mobileLayersBtn{
     position: fixed;
-    bottom: 70px;              /* 👈 un poco más abajo */
+    bottom: 70px;
     right: 12px;
-    z-index: 9999;
+    z-index: 11000;
 
     background: #111;
     color: #fff;
     border: none;
-    border-radius: 18px;
-    padding: 10px 15px;         /* 👈 botón más chico */
-    font-size: 15px;
+    border-radius: 20px;
+    padding: 10px 14px;
+    font-size: 14px;
   }
 
   .layer-toggle {
@@ -277,59 +256,6 @@ body { margin:0; padding:0; }
   .layer-toggle.open {
     display: block;
   }
-}
-
-
-@media (max-width: 768px) {
-
-  .legend,
-  .color-legend {
-    font-size: 11px;          /* 👈 más discreto */
-    padding: 6px 8px;
-    background: rgba(255,255,255,0.9);
-    border-radius: 8px;
-    box-shadow: 0 1px 4px rgba(0,0,0,0.15);
-    max-width: 170px;
-  }
-
-  .legend-title {
-    font-size: 11px;
-    margin-bottom: 4px;
-    font-weight: 600;
-  }
-
-  .legend-item {
-    display: flex;
-    align-items: center;
-    gap: 6px;
-    margin-bottom: 4px;
-  }
-
-  .legend-color {
-    width: 11px;              /* 👈 cuadritos más chicos */
-    height: 11px;
-    border-radius: 3px;
-  }
-}
-
-@media (max-width: 768px) {
-  #infoButton {
-    font-size: 13px;
-    padding: 5px 8px;
-    top: 20px;
-    right: 50px;
-  }
-}
-
-#infoPanel {
-  font-size: 12px;
-  line-height: 1.4;
-  background: #fafafa;
-  border-left: 4px solid #999;
-  padding: 10px 12px;
-  max-width: 320px;
-  top: 60px;
-  right: 12px;
 }
 
 
@@ -1404,6 +1330,7 @@ if(btn && panel){
 
 </body>
 </html>
+
 
 
 
