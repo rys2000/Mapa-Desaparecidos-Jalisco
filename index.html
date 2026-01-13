@@ -1,3 +1,7 @@
+
+
+
+
 <!DOCTYPE html>
 <html lang="es">
 <head>
@@ -13,7 +17,7 @@
 
 <style>
 
-//10 ENERO 2025//
+//12 ENERO 2025 FEMICIDIOS//
 body { margin:0; padding:0; }
 #map { position:absolute; top:0; bottom:0; width:100%; }
 
@@ -58,7 +62,7 @@ body { margin:0; padding:0; }
   background:#fff;
   border:1px solid #aaa;
   padding:10px;
-  z-index:1000;
+  z-index:11000;
   display:none;
   font-size:13px;
 }
@@ -123,7 +127,7 @@ body { margin:0; padding:0; }
   left: 20px;
   background:#f2f4f5;
   max-width: 130px;
-  z-index: 3;
+  z-index: 9999;
 }
 
 
@@ -133,18 +137,18 @@ body { margin:0; padding:0; }
   right:20px;
   background:#f2f4f5;
   padding:6px;
-  border:1px solid grey;
+  border:3px solid grey;
   font-size:11px;
   z-index:9999;
 }
 
 .investiga{
   position:fixed;
-  bottom:50px;
-  right:20px;
+  bottom:20px;
+  right:170px;
   background:#f2f4f5;
   padding:6px;
-  border:1px solid grey;
+  border:3px solid grey;
   font-size:11px;
   z-index:9999;
 }
@@ -289,6 +293,28 @@ body { margin:0; padding:0; }
     top: 80px;
     right: 12px;
   }
+
+  .credit{
+  position:fixed;
+  bottom:50px;
+  right:20px;
+  background:#f2f4f5;
+  padding:6px;
+  border:1px solid grey;
+  font-size:11px;
+  z-index:9999;
+}
+
+.investiga{
+  position:fixed;
+  bottom:20px;
+  right:20px;
+  background:#f2f4f5;
+  padding:6px;
+  border:1px solid grey;
+  font-size:11px;
+  z-index:9999;
+}
 }
 
 </style>
@@ -318,9 +344,9 @@ body { margin:0; padding:0; }
   </p>
 
   <p>
-   El mapa fue elaborado por (X/@rys2000dev) utilizando, principalmente, 
-  de un listado obtenido del sitio web de la COBUPEJ con información hasta 
-  el 31 de diciembre de 2024, recopilado originalmente por el periodista 
+   El mapa fue elaborado por (X/@rys2000dev) utilizando, principalmente,
+  de un listado obtenido del sitio web de la COBUPEJ con información hasta
+  el 31 de diciembre de 2024, recopilado originalmente por el periodista
   Lauro Rodríguez (X/@laurodriguez).
   Los registros correspondientes a 2025 fueron capturados y procesados
   por el académico Víctor González Romero (X/@VMGlezR), de donde fueron retomados.
@@ -331,9 +357,9 @@ body { margin:0; padding:0; }
   <h3>Fosas clandestinas</h3>
   <p>
   Información publicada por la Vicefiscalía de Personas Desaparecidas (2018–2025).
-  Las cifras de hombres y mujeres corresponden a identificaciones preliminares, 
+  Las cifras de hombres y mujeres corresponden a identificaciones preliminares,
   sujetas a verificación y actualización conforme avanzan los procesos oficiales
-  de identificación. En algunos puntos se hizo referencia a la colonia más 
+  de identificación. En algunos puntos se hizo referencia a la colonia más
   cercana debido a la ausencia de coordenadas precisas del evento. ‎
   </p>
 
@@ -344,6 +370,14 @@ body { margin:0; padding:0; }
   (IIEG) y plataformas oficiales de seguridad pública.
   </p>
 
+
+<h3>Femicidios</h3>
+<p>
+Registros del Instituto de Información Estadística y Geográfica de Jalisco (IIEG)
+ y plataformas oficiales de seguridad pública. 
+</p>
+
+
   <h3>Capas de contexto</h3>
   <p>
   Indicadores sociodemográficos del Censo de Población y Vivienda
@@ -351,9 +385,9 @@ body { margin:0; padding:0; }
   </p>
 
   <p style="margin-top:1em; font-size:0.9em; opacity:0.75;">
-  La información presentada es de carácter meramente orientativo y no 
-  sustituye un diagnóstico profesional. Su uso debe realizarse con 
-  la debida cautela. Todos los datos utilizados provienen de fuentes 
+  La información presentada es de carácter meramente orientativo y no
+  sustituye un diagnóstico profesional. Su uso debe realizarse con
+  la debida cautela. Todos los datos utilizados provienen de fuentes
   públicas y de acceso abierto.
   </p>
 </div>
@@ -399,7 +433,8 @@ Aún desaparecidos (2019–2025)
 <input type="radio" name="layer" onclick="showLayer('localizados')">Localizados 2019-2025<br>
 <input type="radio" name="layer" onclick="showLayer('homicidios')">Homicidios 2019-2024<br>
 <input type="radio" name="layer" onclick="showLayer('municipios')">Desapariciones por municipio 2000-2025<br>
-<input type="radio" name="layer" onclick="showLayer('fosas')">Fosas Clandestinas 2018-2025
+<input type="radio" name="layer" onclick="showLayer('fosas')">Fosas Clandestinas 2018-2025<br>
+<input type="radio" name="layer" onclick="showLayer('capa5')">Femicidios (2018-2025)<br>
 <hr>
 <b>Contexto social</b><br>
 <input type="radio" name="layer" onclick="showLayer('juventud')">Jovenes de 15–24<br>
@@ -448,7 +483,16 @@ Aún desaparecidos (2019–2025)
 <div><span style="background:#82043d"></span>6001-7000</div>
 <div><span style="background:#4d0626"></span>7001+</div>
 
-</div>#f21111
+</div>
+
+
+<div id="legend-capa5" class="legend">
+<b>Casos Femicidios</b>
+<div><span style="background:#fde0dd"></span>1</div>
+<div><span style="background:#fa9fb5"></span>2</div>
+<div><span style="background:#c51b8a"></span>3</div>
+<div><span style="background:#7a0177"></span>4+</div>
+</div>
 
 
 <div id="legend-juventud" class="legend">
@@ -619,6 +663,29 @@ map.on("load",()=>{
     }
   });
 
+
+// 🟠 CAPA 5
+map.addLayer({
+  id:"capa5",
+  type:"fill",
+  source:"colonias",
+  layout:{ visibility:"none" },
+  paint:{
+    "fill-color":[
+      "case",
+      ["==",["get","total_capa5"],0],"rgba(0,0,0,0)",
+      ["<=",["get","total_capa5"],1],"#fde0dd",
+      ["<=",["get","total_capa5"],2],"#fa9fb5",
+      ["<=",["get","total_capa5"],3],"#c51b8a",
+      "#7a0177"
+    ],
+    "fill-opacity":0.7,
+    "fill-outline-color":"#000"
+  }
+});
+
+  
+
 //JOVENES
   map.addLayer({
   id:"juventud",
@@ -768,6 +835,14 @@ map.addLayer({
     Desaparecidos: ${p.desaparecidos}<br>
     Localizados: ${p.localizados}
   `);
+
+  popup("capa5",p=>`
+  <b>${p.COL_NORM}</b><br>
+  Municipio: ${p.MUNICIPIO}<br>
+  Femicidios: <b>${p.total_capa5}</b>
+`);
+
+
 popup("juventud",p=>`
   <b>${p.COL_NORM}</b><br>
   Municipio: ${p.MUNICIPIO}<br>
@@ -824,11 +899,12 @@ map.on("click","fosas",e=>{
 };
 
 const layerTitles = {
-  desaparecidos: "Aún desaparecidos (2019–2025)",
-  localizados: "Personas localizadas (2019–2025)",
+  desaparecidos: "Aún desaparecidos ZMG(2019–2025)",
+  localizados: "Personas localizadas ZMG(2019–2025)",
   homicidios: "Homicidios registrados (2019–2024)",
   municipios: "Desapariciones por municipio (2000–2025)",
   fosas: "Fosas clandestinas localizadas en Jalisco (2018–2025)",
+  capa5: "Femicidios Jalisco (2018-2025)",
   juventud: "Jovenes 15–24 años (% población)",
   rezago_edu: "Rezago educativo por colonia",
   rezago_eco: "Rezago económico por colonia"
@@ -891,6 +967,9 @@ function updateChart(layer){
       value: +f.properties.desaparecidos
     }));
   }
+
+
+
 
 function updateCrossChart(mode){
 
@@ -1060,6 +1139,17 @@ function updateCrossChart(mode){
     }));
   }
 
+    if(layer === "capa5"){
+  label = "Casos";
+  barColor = "#c51b8a";
+
+  data = coloniasData.map(f => ({
+    name: f.properties.COL_NORM,
+    value: +f.properties.total_capa5
+  }));
+}
+
+
   // =========================
   // MUNICIPIOS
   // =========================
@@ -1150,13 +1240,13 @@ const layerNotes = {
     Este mapa por colonias del Estado de Jalisco de reportes de personas desaparecidas
     se hizo usando una base de 6,256 boletines (cédulas de búsqueda)
     que fueron emitidos por la Comisión de Búsqueda de Jalisco (COBUPEJ).
-  
+
   </p>`,
 
   localizados: `
   <h3>Personas localizadas</h3>
   <p>
-    Este mapa por colonias del Estado de Jalisco de reportes de personas localizadas 
+    Este mapa por colonias del Estado de Jalisco de reportes de personas localizadas
     se hizo usando una base de 6,256 boletines (cédulas de búsqueda)
     que fueron emitidos por la Comisión de Búsqueda de Jalisco (COBUPEJ).
   </p>`,
@@ -1179,9 +1269,9 @@ y no implica relación directa con otros eventos mostrados en el mapa.
   municipios: `
 <h3>Totales por municipio</h3>
 <p>
-Totales acumulados de personas desaparecidas y localizadas 
+Totales acumulados de personas desaparecidas y localizadas
 por municipio del estado de Jalisco.
-Elaborado con base en el Registro Estatal de Personas Desaparecidas 
+Elaborado con base en el Registro Estatal de Personas Desaparecidas
 del Estado de Jalisco (REPD), correspondiente al periodo 2000–noviembre de 2025.
 </p>
   </p>`,
@@ -1190,29 +1280,46 @@ del Estado de Jalisco (REPD), correspondiente al periodo 2000–noviembre de 202
   <h3>Fosas clandestinas</h3>
 
 <p>
- En Jalisco, se han localizado 223 sitios de inhumación clandestina, 
+ En Jalisco, se han localizado 223 sitios de inhumación clandestina,
   de los cuales se han extraído 2,084 víctimas. Esto hasta noviembre
-  de 2025, según la información oficial publicada por la Vicefiscalía 
-  Especial de Personas Desaparecidas de Jalisco en el sitio: 
-  https://fiscaliaenpersonasdesaparecidas.jalisco.gob.mx/registro-estatal-de-fosas-clandestinas/ 
+  de 2025, según la información oficial publicada por la Vicefiscalía
+  Especial de Personas Desaparecidas de Jalisco en el sitio:
+  https://fiscaliaenpersonasdesaparecidas.jalisco.gob.mx/registro-estatal-de-fosas-clandestinas/
   </p>
-  
+
   <p>
-  A falta de las coordenadas geográficas para la ubicación de cada uno 
-  de los sitios de inhumación clandestina, información que no es pública, 
-  se utilizó como referencia la colonia de ubicación de cada hallazgo. 
-  En 30 casos esto no fue posible ante la ausencia de un asentamiento 
-  de este tipo, por lo que se optó por la colonia más cercana. 
-  A pesar de esto, se debe decir que hubo 15 sitios que no se incluyeron 
-  en el mapa porque tampoco fue posible utilizar una colonia sustituta. 
-  
+  A falta de las coordenadas geográficas para la ubicación de cada uno
+  de los sitios de inhumación clandestina, información que no es pública,
+  se utilizó como referencia la colonia de ubicación de cada hallazgo.
+  En 30 casos esto no fue posible ante la ausencia de un asentamiento
+  de este tipo, por lo que se optó por la colonia más cercana.
+  A pesar de esto, se debe decir que hubo 15 sitios que no se incluyeron
+  en el mapa porque tampoco fue posible utilizar una colonia sustituta.
+
   <p style="margin-top:1em; font-size:0.9em; opacity:0.75;">
-  
-  * Las cifras de hombres y mujeres corresponden a identificaciones preliminares, 
+
+  * Las cifras de hombres y mujeres corresponden a identificaciones preliminares,
   sujetas a verificación y actualización conforme avanzan los procesos oficiales
   de identificación.
-  
+
   </p>`,
+
+
+  capa5: `
+<h3>Femicidios</h3>
+<p>
+Registros del Instituto de Información Estadística y Geográfica de Jalisco (IIEG)
+ y plataformas oficiales de seguridad pública. 
+</p>
+<p>
+Esta capa representa la distribución espacial de casos donde la víctima es una 
+mujer y las autoridades han identificado elementos que sugieren violencia de 
+género (feminicidios) por colonia. Los registros provienen de fuentes 
+oficiales agregadas por entidad, actualizados hasta la última fecha de corte 
+disponible.
+</p>
+`
+,
 
   juventud: `
 <h3>Jovenes (15–24 años)</h3>
@@ -1276,7 +1383,7 @@ if(["juventud","rezago_edu","rezago_eco"].includes(id)){
 
   const layers = [
     "desaparecidos","localizados","homicidios",
-    "municipios","fosas",
+    "municipios","fosas","capa5",
     "juventud","rezago_edu","rezago_eco"
   ];
 
@@ -1365,3 +1472,5 @@ if(btn && panel){
 
 </body>
 </html>
+
+
