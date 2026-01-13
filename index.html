@@ -17,7 +17,7 @@
 
 <style>
 
-//12 ENERO 2025 FEMICIDIOS//
+//12 ENERO 2025 FEMINICIDIOS//
 body { margin:0; padding:0; }
 #map { position:absolute; top:0; bottom:0; width:100%; }
 
@@ -371,7 +371,7 @@ body { margin:0; padding:0; }
   </p>
 
 
-<h3>Femicidios</h3>
+<h3>Feminicidios</h3>
 <p>
 Registros del Instituto de Información Estadística y Geográfica de Jalisco (IIEG)
  y plataformas oficiales de seguridad pública. 
@@ -434,7 +434,7 @@ Aún desaparecidos (2019–2025)
 <input type="radio" name="layer" onclick="showLayer('homicidios')">Homicidios 2019-2024<br>
 <input type="radio" name="layer" onclick="showLayer('municipios')">Desapariciones por municipio 2000-2025<br>
 <input type="radio" name="layer" onclick="showLayer('fosas')">Fosas Clandestinas 2018-2025<br>
-<input type="radio" name="layer" onclick="showLayer('capa5')">Femicidios (2018-2025)<br>
+<input type="radio" name="layer" onclick="showLayer('capa5')">Feminicidios (2018-2025)<br>
 <hr>
 <b>Contexto social</b><br>
 <input type="radio" name="layer" onclick="showLayer('juventud')">Jovenes de 15–24<br>
@@ -487,7 +487,7 @@ Aún desaparecidos (2019–2025)
 
 
 <div id="legend-capa5" class="legend">
-<b>Casos Femicidios</b>
+<b>Casos Feminicidios</b>
 <div><span style="background:#fde0dd"></span>1</div>
 <div><span style="background:#fa9fb5"></span>2</div>
 <div><span style="background:#c51b8a"></span>3</div>
@@ -839,7 +839,7 @@ map.addLayer({
   popup("capa5",p=>`
   <b>${p.COL_NORM}</b><br>
   Municipio: ${p.MUNICIPIO}<br>
-  Femicidios: <b>${p.total_capa5}</b>
+  Feminicidios: <b>${p.total_capa5}</b>
 `);
 
 
@@ -904,7 +904,7 @@ const layerTitles = {
   homicidios: "Homicidios registrados (2019–2024)",
   municipios: "Desapariciones por municipio (2000–2025)",
   fosas: "Fosas clandestinas localizadas en Jalisco (2018–2025)",
-  capa5: "Femicidios Jalisco (2018-2025)",
+  capa5: "Feminicidios Jalisco (2018-2025)",
   juventud: "Jovenes 15–24 años (% población)",
   rezago_edu: "Rezago educativo por colonia",
   rezago_eco: "Rezago económico por colonia"
@@ -1306,7 +1306,7 @@ del Estado de Jalisco (REPD), correspondiente al periodo 2000–noviembre de 202
 
 
   capa5: `
-<h3>Femicidios</h3>
+<h3>Feminicidios</h3>
 <p>
 Registros del Instituto de Información Estadística y Geográfica de Jalisco (IIEG)
  y plataformas oficiales de seguridad pública. 
